@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:technical_test_bti/screens/login_screen.dart';
 import '../services/auth_service.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -21,6 +22,10 @@ class HomeScreen extends StatelessWidget {
             onPressed: () async {
               try {
                 await authService.signOut();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                );
               } catch (e) {
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
