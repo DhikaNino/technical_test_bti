@@ -2,16 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../controllers/news_controller.dart';
 import '../controllers/auth_controller.dart';
+import '../controllers/favorite_controller.dart';
 import '../models/news_article.dart';
 import 'news_detail_screen.dart';
+import 'favorite_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
   final NewsController newsController = Get.put(NewsController());
   final AuthController authController = Get.find<AuthController>();
+  final FavoriteController favoriteController = Get.put(FavoriteController());
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
@@ -81,6 +85,20 @@ class HomeScreen extends StatelessWidget {
                           ),
                           const PopupMenuDivider(),
                           PopupMenuItem<String>(
+                            value: 'favorites',
+                            child: const Row(
+                              children: [
+                                Icon(
+                                  Icons.favorite,
+                                  size: 20,
+                                  color: Colors.red,
+                                ),
+                                SizedBox(width: 8),
+                                Text('Favorit'),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem<String>(
                             value: 'logout',
                             child: const Row(
                               children: [
@@ -92,7 +110,9 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ],
                     onSelected: (value) async {
-                      if (value == 'logout') {
+                      if (value == 'favorites') {
+                        Get.to(() => FavoriteScreen());
+                      } else if (value == 'logout') {
                         await authController.signOut();
                       }
                     },
@@ -168,6 +188,33 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
+            Obx(() {
+              if (newsController.isOffline.value) {
+                return Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 8,
+                  ),
+                  color: Colors.orange[100],
+                  child: Row(
+                    children: [
+                      Icon(Icons.wifi_off, size: 16, color: Colors.orange[900]),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'Mode Offline - Menampilkan berita tersimpan',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.orange[900],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+              return const SizedBox.shrink();
+            }),
             Expanded(
               child: Obx(() {
                 if (newsController.isLoading.value) {
@@ -311,22 +358,27 @@ class HomeScreen extends StatelessWidget {
                 borderRadius: const BorderRadius.vertical(
                   top: Radius.circular(12),
                 ),
-                child: Image.network(
-                  article.urlToImage!,
+                child: CachedNetworkImage(
+                  imageUrl: article.urlToImage!,
                   height: 200,
                   width: double.infinity,
                   fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      height: 200,
-                      color: Colors.grey[300],
-                      child: const Icon(
-                        Icons.image_not_supported,
-                        size: 64,
-                        color: Colors.grey,
+                  placeholder:
+                      (context, url) => Container(
+                        height: 200,
+                        color: Colors.grey[200],
+                        child: const Center(child: CircularProgressIndicator()),
                       ),
-                    );
-                  },
+                  errorWidget:
+                      (context, url, error) => Container(
+                        height: 200,
+                        color: Colors.grey[300],
+                        child: const Icon(
+                          Icons.image_not_supported,
+                          size: 64,
+                          color: Colors.grey,
+                        ),
+                      ),
                 ),
               ),
             Padding(
@@ -337,30 +389,38 @@ class HomeScreen extends StatelessWidget {
                   if (article.source != null)
                     Row(
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.deepPurple.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: Text(
-                            article.source!.name,
-                            style: const TextStyle(
-                              color: Colors.deepPurple,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
+                        Flexible(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.deepPurple.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Text(
+                              article.source!.name,
+                              style: const TextStyle(
+                                color: Colors.deepPurple,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Text(
-                          _formatDate(article.publishedAt),
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[600],
+                        Flexible(
+                          child: Text(
+                            _formatDate(article.publishedAt),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey[600],
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                       ],
@@ -390,20 +450,54 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ],
                   const SizedBox(height: 8),
-                  const Row(
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(
-                        Icons.open_in_new,
-                        size: 16,
-                        color: Colors.deepPurple,
+                      const Row(
+                        children: [
+                          Icon(
+                            Icons.open_in_new,
+                            size: 16,
+                            color: Colors.deepPurple,
+                          ),
+                          SizedBox(width: 4),
+                          Text(
+                            'Read more',
+                            style: TextStyle(
+                              color: Colors.deepPurple,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(width: 4),
-                      Text(
-                        'Read more',
-                        style: TextStyle(
-                          color: Colors.deepPurple,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      GetBuilder<FavoriteController>(
+                        builder:
+                            (favController) => IconButton(
+                              icon: Icon(
+                                favController.isFavorite(article.url)
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color:
+                                    favController.isFavorite(article.url)
+                                        ? Colors.red
+                                        : Colors.grey,
+                              ),
+                              onPressed: () {
+                                final wasRemoved = favController.toggleFavorite(
+                                  article,
+                                );
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      wasRemoved
+                                          ? 'Artikel dihapus dari favorit'
+                                          : 'Artikel disimpan ke favorit',
+                                    ),
+                                    duration: const Duration(seconds: 2),
+                                  ),
+                                );
+                              },
+                            ),
                       ),
                     ],
                   ),

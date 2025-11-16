@@ -1,11 +1,31 @@
-class NewsArticle {
+import 'package:hive/hive.dart';
+
+part 'news_article.g.dart';
+
+@HiveType(typeId: 0)
+class NewsArticle extends HiveObject {
+  @HiveField(0)
   final String? author;
+
+  @HiveField(1)
   final String title;
+
+  @HiveField(2)
   final String? description;
+
+  @HiveField(3)
   final String url;
+
+  @HiveField(4)
   final String? urlToImage;
+
+  @HiveField(5)
   final DateTime publishedAt;
+
+  @HiveField(6)
   final String? content;
+
+  @HiveField(7)
   final Source? source;
 
   NewsArticle({
@@ -33,8 +53,12 @@ class NewsArticle {
   }
 }
 
+@HiveType(typeId: 1)
 class Source {
+  @HiveField(0)
   final String? id;
+
+  @HiveField(1)
   final String name;
 
   Source({this.id, required this.name});

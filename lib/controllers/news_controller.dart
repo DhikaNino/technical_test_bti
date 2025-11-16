@@ -2,9 +2,11 @@ import 'dart:async';
 import 'package:get/get.dart';
 import '../models/news_article.dart';
 import '../services/news_service.dart';
+import 'cache_controller.dart';
 
 class NewsController extends GetxController {
   final NewsService _newsService = NewsService();
+  late CacheController _cacheController;
 
   var articles = <NewsArticle>[].obs;
   var isLoading = true.obs;
@@ -15,6 +17,7 @@ class NewsController extends GetxController {
   var currentPage = 1.obs;
   var hasMoreData = true.obs;
   var searchQuery = ''.obs;
+  var isOffline = false.obs;
 
   Timer? _debounce;
 
@@ -31,6 +34,7 @@ class NewsController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _cacheController = Get.put(CacheController());
     loadNews();
   }
 
@@ -45,6 +49,7 @@ class NewsController extends GetxController {
     errorMessage.value = '';
     currentPage.value = 1;
     hasMoreData.value = true;
+    isOffline.value = false;
 
     try {
       List<NewsArticle> newArticles;
@@ -62,8 +67,18 @@ class NewsController extends GetxController {
 
       articles.value = newArticles;
       hasMoreData.value = newArticles.length >= 10;
+
+      if (newArticles.isNotEmpty && !isSearching.value) {
+        await _cacheController.cacheArticles(newArticles);
+      }
     } catch (e) {
       errorMessage.value = e.toString();
+
+      if (_cacheController.hasCachedData) {
+        articles.value = _cacheController.cachedArticles;
+        isOffline.value = true;
+        errorMessage.value = '';
+      }
     } finally {
       isLoading.value = false;
     }

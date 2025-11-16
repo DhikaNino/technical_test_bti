@@ -1,16 +1,41 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../models/news_article.dart';
+import '../controllers/favorite_controller.dart';
 
 class NewsDetailScreen extends StatelessWidget {
   final NewsArticle article;
 
-  const NewsDetailScreen({super.key, required this.article});
+  NewsDetailScreen({super.key, required this.article});
+
+  final FavoriteController favoriteController = Get.find<FavoriteController>();
 
   String _formatDate(DateTime date) {
-    return DateFormat('d MMMM yyyy • HH:mm', 'id_ID').format(date);
+    final months = [
+      '',
+      'Januari',
+      'Februari',
+      'Maret',
+      'April',
+      'Mei',
+      'Juni',
+      'Juli',
+      'Agustus',
+      'September',
+      'Oktober',
+      'November',
+      'Desember',
+    ];
+
+    final day = date.day;
+    final month = months[date.month];
+    final year = date.year;
+    final hour = date.hour.toString().padLeft(2, '0');
+    final minute = date.minute.toString().padLeft(2, '0');
+
+    return '$day $month $year • $hour:$minute';
   }
 
   Future<void> _openOriginalArticle() async {
@@ -35,25 +60,63 @@ class NewsDetailScreen extends StatelessWidget {
             expandedHeight: 300,
             pinned: true,
             backgroundColor: Colors.deepPurple,
+            actions: [
+              GetBuilder<FavoriteController>(
+                builder:
+                    (favController) => IconButton(
+                      icon: Icon(
+                        favController.isFavorite(article.url)
+                            ? Icons.favorite
+                            : Icons.favorite_border,
+                      ),
+                      onPressed: () {
+                        final wasRemoved = favController.toggleFavorite(
+                          article,
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              wasRemoved
+                                  ? 'Artikel dihapus dari favorit'
+                                  : 'Artikel disimpan ke favorit',
+                            ),
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      },
+                      color:
+                          favController.isFavorite(article.url)
+                              ? Colors.red
+                              : Colors.white,
+                      iconSize: 28,
+                    ),
+              ),
+            ],
             flexibleSpace: FlexibleSpaceBar(
               background:
                   article.urlToImage != null
                       ? Stack(
                         fit: StackFit.expand,
                         children: [
-                          Image.network(
-                            article.urlToImage!,
+                          CachedNetworkImage(
+                            imageUrl: article.urlToImage!,
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Container(
-                                color: Colors.grey[300],
-                                child: const Icon(
-                                  Icons.image_not_supported,
-                                  size: 64,
-                                  color: Colors.grey,
+                            placeholder:
+                                (context, url) => Container(
+                                  color: Colors.grey[200],
+                                  child: const Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
                                 ),
-                              );
-                            },
+                            errorWidget:
+                                (context, url, error) => Container(
+                                  color: Colors.grey[300],
+                                  child: const Icon(
+                                    Icons.image_not_supported,
+                                    size: 64,
+                                    color: Colors.grey,
+                                  ),
+                                ),
                           ),
                           Container(
                             decoration: BoxDecoration(
