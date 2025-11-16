@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'login_screen.dart';
+import 'package:technical_test_bti/screens/start_screen.dart';
 import 'home_screen.dart';
 
 class AuthWrapper extends StatefulWidget {
@@ -24,7 +24,7 @@ class _AuthWrapperState extends State<AuthWrapper> {
         if (snapshot.hasData && snapshot.data != null) {
           return const HomeScreen();
         }
-        return const LoginScreen();
+        return const StartScreen();
       },
     );
   }
