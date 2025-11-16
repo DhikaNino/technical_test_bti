@@ -8,7 +8,7 @@ class NewsService {
   static const String _baseUrl = AppConfig.newsApiBaseUrl;
 
   Future<List<NewsArticle>> getTopHeadlines({
-    String country = 'us',
+    String country = AppConfig.newsApiCountry,
     String? category,
     int pageSize = 10,
     int page = 1,
