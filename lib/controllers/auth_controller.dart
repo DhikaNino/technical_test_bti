@@ -25,6 +25,9 @@ class AuthController extends GetxController {
         errorMessage.value = 'Login dibatalkan';
       } else {
         print('Sign-in successful: ${result.user?.email}');
+        // Force rebuild atau navigate tidak perlu - StreamBuilder akan handle
+        // Tapi kita trigger update untuk memastikan
+        await Future.delayed(Duration(milliseconds: 100));
       }
     } catch (e) {
       print('Sign-in error: $e');

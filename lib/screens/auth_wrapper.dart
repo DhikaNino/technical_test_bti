@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import '../controllers/auth_controller.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'start_screen.dart';
 import 'main_screen.dart';
 
-class AuthWrapper extends StatelessWidget {
-  AuthWrapper({super.key});
-
-  final AuthController authController = Get.put(AuthController());
+class AuthWrapper extends StatefulWidget {
+  const AuthWrapper({super.key});
 
   @override
+  State<AuthWrapper> createState() => _AuthWrapperState();
+}
+
+class _AuthWrapperState extends State<AuthWrapper> {
+  @override
   Widget build(BuildContext context) {
-    return StreamBuilder(
-      stream: authController.authStateChanges,
+    return StreamBuilder<User?>(
+      stream: FirebaseAuth.instance.authStateChanges(),
       builder: (context, snapshot) {
         print(
-          'Auth state: ${snapshot.connectionState}, hasData: ${snapshot.hasData}, data: ${snapshot.data}',
+          'Auth state: ${snapshot.connectionState}, hasData: ${snapshot.hasData}, data: ${snapshot.data?.email}',
         );
 
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -23,12 +25,13 @@ class AuthWrapper extends StatelessWidget {
             body: Center(child: CircularProgressIndicator()),
           );
         }
-        if (snapshot.hasData && snapshot.data != null) {
-          print('User is logged in: ${snapshot.data!.email}');
-          return const MainScreen();
+        
+        if (snapshot.hasData) {
+          print('Redirecting to MainScreen for: ${snapshot.data!.email}');
+          return const MainScreen(key: ValueKey('main-screen'));
         }
-        print('User is not logged in');
-        return StartScreen();
+
+        return StartScreen(key: const ValueKey('start-screen'));
       },
     );
   }

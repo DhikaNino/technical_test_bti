@@ -13,7 +13,7 @@ class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
 
   final NewsController newsController = Get.put(NewsController());
-  final AuthController authController = Get.find<AuthController>();
+  final AuthController authController = Get.put(AuthController());
   final FavoriteController favoriteController = Get.put(FavoriteController());
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();

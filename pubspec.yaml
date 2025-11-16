@@ -48,6 +48,9 @@ dependencies:
   # State Management
   get: ^4.7.2
 
+  # Calendar
+  table_calendar: ^3.1.2
+
   # Local Database
   hive: ^2.2.3
   hive_flutter: ^1.1.0

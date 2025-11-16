@@ -6,10 +6,12 @@ import '../controllers/auth_controller.dart';
 import '../controllers/favorite_controller.dart';
 
 class ProfileScreen extends StatelessWidget {
-  ProfileScreen({super.key});
+  final Function(int)? onNavigateToTab;
 
-  final AuthController authController = Get.find<AuthController>();
-  final FavoriteController favoriteController = Get.find<FavoriteController>();
+  ProfileScreen({super.key, this.onNavigateToTab});
+
+  final AuthController authController = Get.put(AuthController());
+  final FavoriteController favoriteController = Get.put(FavoriteController());
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +32,7 @@ class ProfileScreen extends StatelessWidget {
                 child: const Row(
                   children: [
                     Text(
-                      'Profil',
+                      'Profile',
                       style: TextStyle(
                         color: Colors.black,
                         fontWeight: FontWeight.bold,
@@ -100,7 +102,11 @@ class ProfileScreen extends StatelessWidget {
                           favoriteController.favorites.length > 0
                               ? favoriteController.favorites.length.toString()
                               : 'Tidak ada favorit',
-                      onTap: () {},
+                      onTap: () {
+                        if (onNavigateToTab != null) {
+                          onNavigateToTab!(1);
+                        }
+                      },
                     ),
                   ],
                 ),
@@ -282,9 +288,9 @@ class ProfileScreen extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
-                    'Beritaku',
-                    style: TextStyle(
+                  Text(
+                    AppConfig.appName,
+                    style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: Colors.deepPurple,
@@ -300,8 +306,8 @@ class ProfileScreen extends StatelessWidget {
                       color: Colors.deepPurple.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Text(
-                      'Version 1.0.0',
+                    child: Text(
+                      'Version ${AppConfig.appVersion}',
                       style: TextStyle(
                         fontSize: 12,
                         color: Colors.deepPurple,

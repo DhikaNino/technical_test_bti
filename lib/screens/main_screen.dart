@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'home_screen.dart';
 import 'favorite_screen.dart';
+import 'calendar_screen.dart';
 import 'profile_screen.dart';
 
 class MainScreen extends StatefulWidget {
@@ -13,10 +14,17 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
-  final List<Widget> _screens = [
+  void _changeTab(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
+  List<Widget> get _screens => [
     HomeScreen(),
     FavoriteScreen(),
-    ProfileScreen(),
+    const CalendarScreen(),
+    ProfileScreen(onNavigateToTab: _changeTab),
   ];
 
   @override
@@ -58,6 +66,11 @@ class _MainScreenState extends State<MainScreen> {
               icon: Icon(Icons.favorite_outline),
               activeIcon: Icon(Icons.favorite),
               label: 'Favorit',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.calendar_month_outlined),
+              activeIcon: Icon(Icons.calendar_month),
+              label: 'Kalender',
             ),
             BottomNavigationBarItem(
               icon: Icon(Icons.person_outline),
