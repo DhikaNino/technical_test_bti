@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/news_article.dart';
@@ -12,16 +13,16 @@ class NewsDetailScreen extends StatelessWidget {
     return DateFormat('d MMMM yyyy • HH:mm', 'id_ID').format(date);
   }
 
-  Future<void> _openOriginalArticle(BuildContext context) async {
+  Future<void> _openOriginalArticle() async {
     final uri = Uri.parse(article.url);
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
-      if (context.mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Could not open article')));
-      }
+      Get.snackbar(
+        'Error',
+        'Tidak dapat membuka artikel',
+        snackPosition: SnackPosition.BOTTOM,
+      );
     }
   }
 
@@ -225,7 +226,7 @@ class NewsDetailScreen extends StatelessWidget {
                           Material(
                             color: Colors.transparent,
                             child: InkWell(
-                              onTap: () => _openOriginalArticle(context),
+                              onTap: () => _openOriginalArticle(),
                               borderRadius: BorderRadius.circular(8),
                               child: Container(
                                 padding: const EdgeInsets.symmetric(

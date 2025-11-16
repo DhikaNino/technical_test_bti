@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'login_screen.dart';
 
 class StartScreen extends StatelessWidget {
-  const StartScreen({super.key});
+  StartScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -59,14 +60,7 @@ class StartScreen extends StatelessWidget {
                     width: double.infinity,
                     height: 56,
                     child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LoginScreen(),
-                          ),
-                        );
-                      },
+                      onPressed: () => Get.to(() => LoginScreen()),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
                         foregroundColor: Colors.deepPurple,

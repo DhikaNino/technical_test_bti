@@ -1,85 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:technical_test_bti/screens/home_screen.dart';
-import '../services/auth_service.dart';
+import 'package:get/get.dart';
+import '../controllers/auth_controller.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class LoginScreen extends StatelessWidget {
+  LoginScreen({super.key});
 
-  @override
-  State<LoginScreen> createState() => _LoginScreenState();
-}
-
-class _LoginScreenState extends State<LoginScreen> {
-  final _authService = AuthService();
-  bool _isLoading = false;
-
-  Future<void> _handleGoogleSignIn() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final userCredential = await _authService.signInWithGoogle();
-
-      if (userCredential != null && mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
-      } else if (userCredential == null && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Login dibatalkan'),
-            backgroundColor: Colors.orange,
-          ),
-        );
-      }
-    } on FirebaseAuthException catch (e) {
-      if (mounted) {
-        String message = 'Login gagal';
-
-        switch (e.code) {
-          case 'account-exists-with-different-credential':
-            message = 'Akun sudah terdaftar dengan metode login lain';
-            break;
-          case 'invalid-credential':
-            message = 'Credential tidak valid';
-            break;
-          case 'operation-not-allowed':
-            message = 'Google Sign-In belum diaktifkan di Firebase Console';
-            break;
-          case 'user-disabled':
-            message = 'Akun dinonaktifkan';
-            break;
-          case 'user-not-found':
-            message = 'User tidak ditemukan';
-            break;
-          case 'wrong-password':
-            message = 'Password salah';
-            break;
-          default:
-            message = 'Login gagal: ${e.message}';
-        }
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(message), backgroundColor: Colors.red),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e'), backgroundColor: Colors.red),
-        );
-      }
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
-    }
-  }
+  final AuthController authController = Get.put(AuthController());
 
   @override
   Widget build(BuildContext context) {
@@ -145,47 +71,54 @@ class _LoginScreenState extends State<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 60),
-                  SizedBox(
-                    height: 56,
-                    child: ElevatedButton.icon(
-                      onPressed: _isLoading ? null : _handleGoogleSignIn,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: Colors.black87,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
+                  Obx(
+                    () => SizedBox(
+                      height: 56,
+                      child: ElevatedButton.icon(
+                        onPressed:
+                            authController.isLoading.value
+                                ? null
+                                : () => authController.signInWithGoogle(),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: Colors.black87,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          elevation: 8,
                         ),
-                        elevation: 8,
-                      ),
-                      icon:
-                          _isLoading
-                              ? const SizedBox(
-                                height: 24,
-                                width: 24,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                    Colors.deepPurple,
+                        icon:
+                            authController.isLoading.value
+                                ? const SizedBox(
+                                  height: 24,
+                                  width: 24,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.deepPurple,
+                                    ),
                                   ),
+                                )
+                                : Image.asset(
+                                  'assets/google_logo.png',
+                                  height: 24,
+                                  width: 24,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return const Icon(
+                                      Icons.g_mobiledata,
+                                      size: 28,
+                                      color: Colors.red,
+                                    );
+                                  },
                                 ),
-                              )
-                              : Image.asset(
-                                'assets/google_logo.png',
-                                height: 24,
-                                width: 24,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return const Icon(
-                                    Icons.g_mobiledata,
-                                    size: 28,
-                                    color: Colors.red,
-                                  );
-                                },
-                              ),
-                      label: Text(
-                        _isLoading ? 'Memproses...' : 'Masuk dengan Google',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
+                        label: Text(
+                          authController.isLoading.value
+                              ? 'Memproses...'
+                              : 'Masuk dengan Google',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ),

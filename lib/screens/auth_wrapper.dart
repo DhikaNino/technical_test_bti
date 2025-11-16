@@ -1,20 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:technical_test_bti/screens/start_screen.dart';
+import 'package:get/get.dart';
+import '../controllers/auth_controller.dart';
+import 'start_screen.dart';
 import 'home_screen.dart';
 
-class AuthWrapper extends StatefulWidget {
-  const AuthWrapper({super.key});
+class AuthWrapper extends StatelessWidget {
+  AuthWrapper({super.key});
 
-  @override
-  State<AuthWrapper> createState() => _AuthWrapperState();
-}
+  final AuthController authController = Get.put(AuthController());
 
-class _AuthWrapperState extends State<AuthWrapper> {
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
+    return StreamBuilder(
+      stream: authController.authStateChanges,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(
@@ -22,9 +20,9 @@ class _AuthWrapperState extends State<AuthWrapper> {
           );
         }
         if (snapshot.hasData && snapshot.data != null) {
-          return const HomeScreen();
+          return HomeScreen();
         }
-        return const StartScreen();
+        return StartScreen();
       },
     );
   }
