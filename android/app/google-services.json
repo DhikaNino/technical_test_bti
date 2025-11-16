@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "706849939010",
+    "project_id": "bti-test-flutter",
+    "storage_bucket": "bti-test-flutter.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:706849939010:android:a393f44885aeba632997db",
+        "android_client_info": {
+          "package_name": "com.example.technical_test_bti"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA7RYIngCiD4NbKJRNCizPZQJ8FFdpdGuE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
