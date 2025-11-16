@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
 import 'start_screen.dart';
-import 'home_screen.dart';
+import 'main_screen.dart';
 
 class AuthWrapper extends StatelessWidget {
   AuthWrapper({super.key});
@@ -20,7 +20,7 @@ class AuthWrapper extends StatelessWidget {
           );
         }
         if (snapshot.hasData && snapshot.data != null) {
-          return HomeScreen();
+          return const MainScreen();
         }
         return StartScreen();
       },

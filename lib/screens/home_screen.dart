@@ -8,8 +8,6 @@ import '../controllers/auth_controller.dart';
 import '../controllers/favorite_controller.dart';
 import '../models/news_article.dart';
 import 'news_detail_screen.dart';
-import 'favorite_screen.dart';
-import 'profile_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -50,86 +48,123 @@ class HomeScreen extends StatelessWidget {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   PopupMenuButton<String>(
-                    icon: CircleAvatar(
-                      radius: 20,
-                      backgroundImage:
-                          user?.photoURL != null
-                              ? NetworkImage(user!.photoURL!)
-                              : null,
-                      child:
-                          user?.photoURL == null
-                              ? const Icon(Icons.person, size: 20)
-                              : null,
+                    offset: const Offset(0, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    elevation: 8,
+                    color: Colors.white,
+                    icon: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: Colors.deepPurple.withOpacity(0.3),
+                          width: 2,
+                        ),
+                      ),
+                      child: CircleAvatar(
+                        radius: 20,
+                        backgroundImage:
+                            user?.photoURL != null
+                                ? NetworkImage(user!.photoURL!)
+                                : null,
+                        child:
+                            user?.photoURL == null
+                                ? const Icon(Icons.person, size: 20)
+                                : null,
+                      ),
                     ),
                     itemBuilder:
-                        (context) => <PopupMenuEntry<String>>[
+                        (context) => [
                           PopupMenuItem<String>(
                             enabled: false,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  user?.displayName ?? 'User',
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 24,
+                                        backgroundImage:
+                                            user?.photoURL != null
+                                                ? NetworkImage(user!.photoURL!)
+                                                : null,
+                                        child:
+                                            user?.photoURL == null
+                                                ? const Icon(
+                                                  Icons.person,
+                                                  size: 24,
+                                                )
+                                                : null,
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              user?.displayName ?? 'User',
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 16,
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              user?.email ?? '',
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Colors.grey[600],
+                                              ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ),
-                                Text(
-                                  user?.email ?? '',
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                           const PopupMenuDivider(),
                           PopupMenuItem<String>(
-                            value: 'profile',
-                            child: const Row(
-                              children: [
-                                Icon(
-                                  Icons.person,
-                                  size: 20,
-                                  color: Colors.deepPurple,
-                                ),
-                                SizedBox(width: 8),
-                                Text('Profil'),
-                              ],
-                            ),
-                          ),
-                          PopupMenuItem<String>(
-                            value: 'favorites',
-                            child: const Row(
-                              children: [
-                                Icon(
-                                  Icons.favorite,
-                                  size: 20,
-                                  color: Colors.red,
-                                ),
-                                SizedBox(width: 8),
-                                Text('Favorit'),
-                              ],
-                            ),
-                          ),
-                          PopupMenuItem<String>(
                             value: 'logout',
-                            child: const Row(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                            child: Row(
                               children: [
-                                Icon(Icons.logout, size: 20),
-                                SizedBox(width: 8),
-                                Text('Logout'),
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.red.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Icon(
+                                    Icons.logout,
+                                    size: 20,
+                                    color: Colors.red,
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                const Text(
+                                  'Logout',
+                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                ),
                               ],
                             ),
                           ),
                         ],
                     onSelected: (value) async {
-                      if (value == 'profile') {
-                        Get.to(() => ProfileScreen());
-                      } else if (value == 'favorites') {
-                        Get.to(() => FavoriteScreen());
-                      } else if (value == 'logout') {
+                      if (value == 'logout') {
                         await authController.signOut();
                       }
                     },
