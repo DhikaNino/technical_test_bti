@@ -31,7 +31,8 @@ class FavoriteController extends GetxController {
         _favoritesBox.delete(key);
         wasRemoved = true;
       } else {
-        _favoritesBox.add(article);
+        final newArticle = article.copyWith();
+        _favoritesBox.add(newArticle);
         wasRemoved = false;
       }
       loadFavorites();

@@ -9,6 +9,7 @@ import '../controllers/favorite_controller.dart';
 import '../models/news_article.dart';
 import 'news_detail_screen.dart';
 import 'favorite_screen.dart';
+import 'profile_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({super.key});
@@ -85,6 +86,20 @@ class HomeScreen extends StatelessWidget {
                           ),
                           const PopupMenuDivider(),
                           PopupMenuItem<String>(
+                            value: 'profile',
+                            child: const Row(
+                              children: [
+                                Icon(
+                                  Icons.person,
+                                  size: 20,
+                                  color: Colors.deepPurple,
+                                ),
+                                SizedBox(width: 8),
+                                Text('Profil'),
+                              ],
+                            ),
+                          ),
+                          PopupMenuItem<String>(
                             value: 'favorites',
                             child: const Row(
                               children: [
@@ -110,7 +125,9 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ],
                     onSelected: (value) async {
-                      if (value == 'favorites') {
+                      if (value == 'profile') {
+                        Get.to(() => ProfileScreen());
+                      } else if (value == 'favorites') {
                         Get.to(() => FavoriteScreen());
                       } else if (value == 'logout') {
                         await authController.signOut();
@@ -483,15 +500,24 @@ class HomeScreen extends StatelessWidget {
                                         : Colors.grey,
                               ),
                               onPressed: () {
-                                final wasRemoved = favController.toggleFavorite(
+                                final isRemove = favController.toggleFavorite(
                                   article,
                                 );
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                    content: Text(
-                                      wasRemoved
-                                          ? 'Artikel dihapus dari favorit'
-                                          : 'Artikel disimpan ke favorit',
+                                    content: Row(
+                                      children: [
+                                        Text(
+                                          isRemove
+                                              ? 'Artikel dihapus dari favorit'
+                                              : 'Artikel disimpan ke favorit',
+                                        ),
+                                      ],
+                                    ),
+                                    backgroundColor: Colors.green,
+                                    behavior: SnackBarBehavior.floating,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10),
                                     ),
                                     duration: const Duration(seconds: 2),
                                   ),

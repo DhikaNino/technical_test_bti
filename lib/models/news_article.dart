@@ -51,6 +51,20 @@ class NewsArticle extends HiveObject {
       source: json['source'] != null ? Source.fromJson(json['source']) : null,
     );
   }
+
+  NewsArticle copyWith() {
+    return NewsArticle(
+      author: author,
+      title: title,
+      description: description,
+      url: url,
+      urlToImage: urlToImage,
+      publishedAt: publishedAt,
+      content: content,
+      source:
+          source != null ? Source(id: source!.id, name: source!.name) : null,
+    );
+  }
 }
 
 @HiveType(typeId: 1)

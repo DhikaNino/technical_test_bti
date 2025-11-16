@@ -70,15 +70,22 @@ class NewsDetailScreen extends StatelessWidget {
                             : Icons.favorite_border,
                       ),
                       onPressed: () {
-                        final wasRemoved = favController.toggleFavorite(
-                          article,
-                        );
+                        final isRemove = favController.toggleFavorite(article);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text(
-                              wasRemoved
-                                  ? 'Artikel dihapus dari favorit'
-                                  : 'Artikel disimpan ke favorit',
+                            content: Row(
+                              children: [
+                                Text(
+                                  isRemove
+                                      ? 'Artikel dihapus dari favorit'
+                                      : 'Artikel disimpan ke favorit',
+                                ),
+                              ],
+                            ),
+                            backgroundColor: Colors.green,
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
                             duration: const Duration(seconds: 2),
                           ),
