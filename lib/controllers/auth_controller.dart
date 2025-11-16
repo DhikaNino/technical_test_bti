@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../services/auth_service.dart';
@@ -16,22 +17,18 @@ class AuthController extends GetxController {
       isLoading.value = true;
       errorMessage.value = '';
 
-      await _authService.signInWithGoogle();
+      print('Starting Google Sign-In...');
+      final result = await _authService.signInWithGoogle();
 
-      Get.snackbar(
-        'Berhasil',
-        'Login berhasil!',
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 2),
-      );
+      if (result == null) {
+        print('User cancelled sign-in');
+        errorMessage.value = 'Login dibatalkan';
+      } else {
+        print('Sign-in successful: ${result.user?.email}');
+      }
     } catch (e) {
-      errorMessage.value = e.toString();
-      Get.snackbar(
-        'Error',
-        'Login gagal: ${e.toString()}',
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 3),
-      );
+      print('Sign-in error: $e');
+      errorMessage.value = 'Login gagal: ${e.toString()}';
     } finally {
       isLoading.value = false;
     }
@@ -41,11 +38,7 @@ class AuthController extends GetxController {
     try {
       await _authService.signOut();
     } catch (e) {
-      Get.snackbar(
-        'Error',
-        'Logout gagal: ${e.toString()}',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      debugPrint("Logout gagal: $e");
     }
   }
 }

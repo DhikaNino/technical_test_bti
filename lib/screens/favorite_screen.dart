@@ -18,7 +18,6 @@ class FavoriteScreen extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            // Header
             Container(
               color: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),

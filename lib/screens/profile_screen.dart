@@ -21,7 +21,6 @@ class ProfileScreen extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              // Header
               Container(
                 color: Colors.white,
                 padding: const EdgeInsets.symmetric(

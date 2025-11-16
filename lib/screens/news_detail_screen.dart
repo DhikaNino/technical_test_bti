@@ -43,11 +43,7 @@ class NewsDetailScreen extends StatelessWidget {
     if (await canLaunchUrl(uri)) {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } else {
-      Get.snackbar(
-        'Error',
-        'Tidak dapat membuka artikel',
-        snackPosition: SnackPosition.BOTTOM,
-      );
+      debugPrint("Tidak dapat membuka artikel: ${article.url}");
     }
   }
 
