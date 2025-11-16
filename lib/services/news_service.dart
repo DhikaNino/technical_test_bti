@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../models/news_article.dart';
+import '../config/app_config.dart';
 
 class NewsService {
-  static const String _apiKey = '54957220e7f147e183bba81f56bb712c';
-  static const String _baseUrl = 'https://newsapi.org/v2/top-headlines?';
+  static const String _apiKey = AppConfig.newsApiKey;
+  static const String _baseUrl = AppConfig.newsApiBaseUrl;
 
   Future<List<NewsArticle>> getTopHeadlines({
     String country = 'us',

@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../controllers/auth_controller.dart';
 import '../controllers/favorite_controller.dart';
+import '../config/app_config.dart';
 
 class ProfileScreen extends StatelessWidget {
   final Function(int)? onNavigateToTab;
