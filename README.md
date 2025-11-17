@@ -39,7 +39,7 @@ Before running this project, make sure you have:
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone [https://github.com/DhikaNino/technical_test_bti.git](https://github.com/DhikaNino/technical_test_bti.git)
 cd technical_test_bti
 ```
 
