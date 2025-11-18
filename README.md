@@ -1,4 +1,4 @@
-# Beritaku(Technical Test PT. Bionic Technologi Indonesia)
+# Beritaku(Technical Test PT. Bionic Teknologi Indonesia)
 
 A modern Flutter news application with Firebase authentication, offline capability, and favorite features.
 
@@ -221,4 +221,4 @@ Make sure these files are properly configured:
 
 ## License
 
-This project is intended for technical testing by PT. Bionic Technology Indonesia.
+This project is intended for technical testing by PT. Bionic Teknologi Indonesia.
